@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Salma's Supreme Realm 👑</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Cairo:wght@400;700;900&family=Orbitron:wght@800&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --main: #ff007f; 
+            --bg: #0f0c29; 
+            --bg-gradient: linear-gradient(to bottom, #0f0c29, #302b63, #24243e);
+            --card: rgba(255, 255, 255, 0.05); 
+            --border: rgba(255, 255, 255, 0.1);
+            --text: #fff; 
+            --gold: #ffd700;
+            --success: #00e676;
+            --danger: #ff1744;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+        body { margin: 0; background: var(--bg-gradient); color: var(--text); font-family: 'Cairo', sans-serif; overflow: hidden; height: 100vh; transition: 0.5s; }
+
+        .stars-container { position: fixed; top: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
+        .star { position: absolute; background: white; border-radius: 50%; animation: twinkle var(--d) infinite; opacity: 0; }
+        @keyframes twinkle { 0% { opacity: 0; transform: scale(0.5); } 50% { opacity: 0.8; transform: scale(1.2); } 100% { opacity: 0; transform: scale(0.5); } }
+
+        .container { height: 100vh; display: flex; flex-direction: column; padding: 20px; overflow-y: auto; padding-bottom: 110px; scrollbar-width: none; }
+        .container::-webkit-scrollbar { display: none; }
+        
+        section { display: none; animation: slideUp 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28); }
+        section.active { display: block; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(40px) scale(0.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+        .card { 
+            background: var(--card); 
+            border: 1px solid var(--border); 
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border-radius: 24px; padding: 20px; margin-bottom: 20px; 
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            position: relative; overflow: hidden;
+        }
+
+        h1 { text-align: center; margin-bottom: 20px; font-weight: 900; letter-spacing: -0.5px; text-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+
+        .item-row { 
+            background: rgba(255,255,255,0.03); padding: 18px; border-radius: 18px; margin-bottom: 12px; 
+            display: flex; justify-content: space-between; align-items: center; 
+            border: 1px solid transparent; cursor: pointer; transition: 0.3s; 
+            position: relative;
+        }
+        .item-row:active { transform: scale(0.97); }
+        .item-row.done { background: linear-gradient(90deg, rgba(255,255,255,0.1), transparent); border-right: 4px solid var(--main); }
+        
+        .late-badge { background: var(--danger); color: white; font-size: 0.7rem; padding: 2px 8px; border-radius: 10px; margin-left: 10px; animation: pulse 1s infinite; display: none; }
+
+        .navbar { 
+            position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); 
+            width: 95%; height: 75px; background: rgba(20, 20, 20, 0.85); backdrop-filter: blur(20px); 
+            border-radius: 40px; display: flex; justify-content: space-evenly; align-items: center; 
+            border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 10px 40px rgba(0,0,0,0.5); z-index: 1000; 
+        }
+        .nav-btn { font-size: 1.6rem; opacity: 0.5; transition: 0.4s; color: white; display: flex; align-items: center; justify-content: center; width: 50px; height: 50px; border-radius: 50%; position: relative; }
+        .nav-btn.active { opacity: 1; background: var(--main); color: white; transform: translateY(-20px) scale(1.1); box-shadow: 0 10px 25px var(--main); border: 2px solid #fff; }
+        .nav-dot { position: absolute; top: 10px; right: 10px; width: 10px; height: 10px; background: #ff0000; border-radius: 50%; border: 1px solid #fff; display: none; }
+
+        .btn-action { background: var(--main); color: white; border: none; padding: 18px; border-radius: 20px; width: 100%; font-weight: 900; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.3); font-family: 'Cairo'; margin-top: 10px; font-size: 1.1rem; transition: 0.2s; }
+        .btn-action:active { transform: scale(0.95); }
+        input[type="text"] { width: 100%; padding: 18px; border-radius: 18px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.3); color: inherit; margin-bottom: 15px; font-family: inherit; font-size: 1rem; }
+
+        .hero-power-container { position: relative; width: 220px; height: 220px; margin: 20px auto; display: flex; align-items: center; justify-content: center; }
+        .hero-ring { position: absolute; inset: 0; border-radius: 50%; border: 10px solid transparent; border-top-color: var(--main); border-left-color: var(--main); animation: spin 3s linear infinite; filter: drop-shadow(0 0 10px var(--main)); }
+        .hero-number { font-size: 5rem; font-weight: 900; color: #fff; z-index: 2; text-shadow: 0 0 30px var(--main); font-family: 'Orbitron', sans-serif; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .stat-box { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 20px; text-align: center; border: 1px solid rgba(255,255,255,0.05); }
+        .stat-val { font-size: 1.8rem; font-weight: 900; color: var(--main); margin: 5px 0; }
+        .chart-wrapper { display: flex; align-items: flex-end; justify-content: space-between; height: 150px; padding-top: 20px; gap: 5px; }
+        .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; }
+        .bar { width: 80%; background: rgba(255,255,255,0.1); border-radius: 50px; transition: height 1s; min-height: 5px; }
+        .bar.high { background: var(--main); box-shadow: 0 0 15px var(--main); }
+
+        .badge-card { background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.2) 100%); border: 1px solid rgba(255,255,255,0.05); border-radius: 24px; padding: 20px; margin-bottom: 20px; position: relative; overflow: hidden; transition: 0.3s; }
+        .badge-card.locked { opacity: 0.7; filter: grayscale(0.8); }
+        .badge-header { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
+        .badge-icon { font-size: 3rem; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 50%; width: 70px; height: 70px; display: flex; align-items: center; justify-content: center; }
+        
+        .progress-bar { width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; margin-top: 10px; }
+        .progress-fill { height: 100%; background: var(--main); width: 0%; transition: 1s; }
+        
+        .claim-btn { background: var(--gold); color: #000; font-weight: 900; border: none; width: 100%; padding: 15px; border-radius: 15px; margin-top: 15px; cursor: pointer; }
+
+        .lock-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10; }
+
+        .reward-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 50000; display: none; align-items: center; justify-content: center; flex-direction: column; }
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 20000; display: none; align-items: center; justify-content: center; padding: 25px; }
+        .modal-box { background: #1a1a2e; border: 2px solid var(--main); border-radius: 30px; padding: 30px; width: 100%; text-align: center; }
+
+        #splash { position: fixed; inset: 0; background: #000; display: flex; align-items: center; justify-content: center; z-index: 10000; transition: 0.5s; }
+        .splash-name { font-size: 5rem; font-family: 'Orbitron'; color: var(--main); text-shadow: 0 0 40px var(--main); }
+
+        body.mode-holy { --main: #d4af37; --bg-gradient: linear-gradient(to bottom, #062c21, #0f4c3a); }
+        body.mode-zen { --main: #ff85a2; --bg-gradient: linear-gradient(to top, #fff1eb 0%, #ace0f9 100%); --text: #4a4a4a; --card: rgba(255,255,255,0.65); }
+    </style>
+</head>
+<body class="mode-comedy">
+
+<div class="stars-container" id="stars"></div>
+
+<div id="splash">
+    <div class="splash-name">SALMA</div>
+</div>
+
+<div id="reward-modal" class="reward-modal" onclick="closeReward()">
+    <div class="reward-content" style="text-align: center;">
+        <div id="r-icon" style="font-size: 6rem;">👑</div>
+        <div id="r-title" style="font-size: 2.5rem; color: var(--gold); margin: 20px 0;">ملكة متوجة</div>
+        <button class="btn-action" style="width: 200px;">استلام ✨</button>
+    </div>
+</div>
+
+<div id="modal" class="modal">
+    <div class="modal-box">
+        <h2 id="m-title" style="color:var(--main);"></h2>
+        <p id="m-body"></p>
+        <button class="btn-action" onclick="document.getElementById('modal').style.display='none'">استمرار ✨</button>
+    </div>
+</div>
+
+<div class="container">
+    <div style="text-align:center; margin-bottom:20px;">
+        <div style="font-size: 3rem;">👑</div>
+        <div style="font-weight: bold; font-size: 1.5rem;">مملكة سلمى</div>
+    </div>
+
+    <section id="prayers" class="active">
+        <h1 id="h-prayers">جدول البطولات</h1>
+        <div class="card">
+            <div class="item-row" id="fajr" onclick="markPrayer('fajr', 2, 4)"><span>🌅 صلاة الفجر</span> <b>2 ركعة</b></div>
+            <div class="item-row" id="dhuhr" onclick="markPrayer('dhuhr', 4, 12)"><span>☀️ صلاة الظهر</span> <b>4 ركعات</b></div>
+            <div class="item-row" id="asr" onclick="markPrayer('asr', 4, 15)"><span>⛅ صلاة العصر</span> <b>4 ركعات</b></div>
+            <div class="item-row" id="maghrib" onclick="markPrayer('maghrib', 3, 17)"><span>🌆 صلاة المغرب</span> <b>3 ركعات</b></div>
+            <div class="item-row" id="isha" onclick="markPrayer('isha', 4, 19)"><span>🌙 صلاة العشاء</span> <b>4 ركعات</b></div>
+        </div>
+    </section>
+
+    <section id="goals">
+        <h1 id="h-goals">قائمة الطموحات</h1>
+        <div class="card">
+            <input type="text" id="goal-in" placeholder="ماذا سننجز اليوم يا سلمى؟">
+            <button class="btn-action" onclick="addGoal()">إضافة المهمة 🚀</button>
+            <div id="goal-list" style="margin-top:20px;"></div>
+        </div>
+    </section>
+
+    <section id="stats">
+        <h1 id="h-stats">تحليل الأداء</h1>
+        <div class="card">
+            <div class="stats-grid">
+                <div class="stat-box"><div>الركعات</div><div class="stat-val" id="st-total">0</div></div>
+                <div class="stat-box"><div>الأوسمة</div><div class="stat-val" id="st-badges">0</div></div>
+            </div>
+            <div class="chart-wrapper" id="history-chart"></div>
+        </div>
+    </section>
+
+    <section id="challenges">
+        <h1 id="h-challenges">رحلة الصعود 🏰</h1>
+        <div id="challenges-list"></div>
+    </section>
+
+    <section id="hero">
+        <h1 id="h-hero">تحدي الاستمرارية</h1>
+        <div class="card" style="text-align: center;">
+            <div class="hero-power-container">
+                <div class="hero-ring"></div>
+                <div class="hero-number" id="hero-display">0</div>
+            </div>
+            <button class="btn-action" id="btn-hero-claim" onclick="claimHero()">أنا بطلة اليوم ✨</button>
+            <button onclick="resetHero()" style="background:none; border:none; color:gray; margin-top:20px;">تصفير العداد 💔</button>
+        </div>
+    </section>
+</div>
+
+<div class="navbar">
+    <div class="nav-btn active" onclick="nav('prayers', this)">🕋</div>
+    <div class="nav-btn" onclick="nav('goals', this)">📝</div>
+    <div class="nav-btn" onclick="nav('stats', this)">📊</div>
+    <div class="nav-btn" onclick="nav('challenges', this)">🏆</div>
+    <div class="nav-btn" onclick="nav('hero', this)">👑</div>
+</div>
+
+<script>
+    let db = JSON.parse(localStorage.getItem('salma_supreme_v9')) || { days:{}, goals:[], hero:0, lastH:"", totalR:0, ui:'comedy', badges:[] };
+    let today = new Date().toDateString();
+    if(!db.days[today]) db.days[today] = { p:[], r:0 };
+
+    const modes = {
+        comedy: { h: ["جدول البطولات", "ناوية على إيه؟", "حصاد العظمة", "عداد الجبروت", "رحلة الصعود"], cheat: "الوقت لسه مجاش يا سلمى! 😂", rank: ["مبتدئة", "مكافحة", "وحش صلاة", "أسطورة"] },
+        holy: { h: ["زاد الطاعات", "بستان المقاصد", "سجل الحسنات", "مقام الثبات", "معراج الروح"], cheat: "صبراً يا سلمى ✨", rank: ["طالبة علم", "عابدة", "قانتة", "من أهل الصلاة"] }
+    };
+
+    const challenges = [
+        { id: 'level1', title: "فراشة النور", desc: "ثبات 3 أيام", icon: "🦋", req: 3 },
+        { id: 'level2', title: "جوهرة الفجر", desc: "ثبات 7 أيام", icon: "💎", req: 7 },
+        { id: 'level3', title: "درع العظمة", desc: "ثبات 15 يوماً", icon: "🛡️", req: 15 }
+    ];
+
+    // إخفاء الشاشة الافتتاحية بعد ثانية
+    window.onload = () => {
+        setTimeout(() => { 
+            document.getElementById('splash').style.opacity = '0';
+            setTimeout(() => document.getElementById('splash').style.display = 'none', 500);
+        }, 1500);
+        updateUI();
+    };
+
+    function save() { localStorage.setItem('salma_supreme_v9', JSON.stringify(db)); }
+
+    function nav(id, el) {
+        document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        document.querySelectorAll('.nav-btn').forEach(n => n.classList.remove('active'));
+        el.classList.add('active');
+        if(id === 'stats') renderStats();
+        if(id === 'challenges') renderChallenges();
+    }
+
+    function markPrayer(id, r, hr) {
+        let now = new Date().getHours();
+        if(db.days[today].p.includes(id)) return;
+        if(now < hr) {
+            showModal("بدري أوي!", modes.comedy.cheat);
+            return;
+        }
+        db.days[today].p.push(id); db.days[today].r += r; db.totalR += r;
+        save(); updateUI();
+        confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+    }
+
+    function showModal(t, b) {
+        document.getElementById('m-title').innerText = t;
+        document.getElementById('m-body').innerText = b;
+        document.getElementById('modal').style.display = 'flex';
+    }
+
+    function updateUI() {
+        document.getElementById('hero-display').innerText = db.hero;
+        document.getElementById('st-total').innerText = db.totalR;
+        db.days[today].p.forEach(p => {
+            const el = document.getElementById(p);
+            if(el) el.classList.add('done');
+        });
+    }
+
+    function claimHero() {
+        if(db.lastH === today) { alert("سجلتِ اليوم بالفعل!"); return; }
+        db.hero++; db.lastH = today; save(); updateUI();
+        confetti({ particleCount: 150 });
+    }
+
+    function resetHero() { if(confirm("هل أنتِ متأكدة؟")) { db.hero = 0; save(); updateUI(); } }
+
+    function renderChallenges() {
+        const list = document.getElementById('challenges-list');
+        list.innerHTML = '';
+        challenges.forEach(c => {
+            let progress = Math.min((db.hero / c.req) * 100, 100);
+            let isClaimed = db.badges.includes(c.id);
+            list.innerHTML += `
+                <div class="badge-card ${progress < 100 && !isClaimed ? 'locked' : ''}">
+                    <div class="badge-header">
+                        <div class="badge-icon">${c.icon}</div>
+                        <div>
+                            <h3>${c.title}</h3>
+                            <p>${c.desc}</p>
+                        </div>
+                    </div>
+                    <div class="progress-bar"><div class="progress-fill" style="width:${progress}%"></div></div>
+                    ${progress >= 100 && !isClaimed ? `<button class="claim-btn" onclick="unlockBadge('${c.id}')">استلام</button>` : ''}
+                </div>`;
+        });
+    }
+
+    function unlockBadge(id) {
+        db.badges.push(id); save(); renderChallenges();
+        document.getElementById('reward-modal').style.display = 'flex';
+    }
+
+    function closeReward() { document.getElementById('reward-modal').style.display = 'none'; }
+
+    function renderStats() {
+        const chart = document.getElementById('history-chart');
+        chart.innerHTML = '';
+        for(let i=6; i>=0; i--) {
+            let d = new Date(); d.setDate(d.getDate()-i);
+            let k = d.toDateString();
+            let val = db.days[k] ? db.days[k].p.length : 0;
+            chart.innerHTML += `<div class="bar-col"><div class="bar" style="height:${(val/5)*100}%"></div></div>`;
+        }
+    }
+</script>
+</body>
+</html>
